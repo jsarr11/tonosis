@@ -26,9 +26,15 @@
                 <button id="open-clients-btn" class="primary-btn">
                     Πελάτες
                 </button>
+                <button id="open-inform-btn" class="primary-btn">
+                    Κατάσταση επιβεβαίωσης
+                </button>
+
             </div>
         </div>
     </div>
+
+    <!--------------------   CLIENT MODALS -------------------->
 
     <div id="clients-backdrop" class="modal-backdrop hidden"></div>
 
@@ -100,8 +106,77 @@
         </div>
     </div>
 
+    <!--------------------   INFORM STATUS MODALS -------------------->
+
+    <!-- Inform Status Backdrop -->
+    <div id="inform-backdrop" class="modal-backdrop hidden"></div>
+
+    <!-- Inform Status Modal -->
+    <div id="inform-modal" class="modal hidden">
+        <div class="modal-box">
+
+            <div class="modal-header">
+                <h3>Inform Status</h3>
+                <button id="close-inform-btn" class="icon-btn">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="clients-top-row">
+                    <div class="clients-search-wrapper">
+                        <label for="inform-search">Search</label>
+                        <input id="inform-search" type="text" placeholder="Type to filter..." />
+                    </div>
+
+                    <button id="toggle-add-inform-btn" class="circle-btn" title="Add">+</button>
+                </div>
+
+                <div id="add-inform-panel" class="add-client-panel hidden">
+                    <label for="new-inform-name">New inform status</label>
+                    <input id="new-inform-name" type="text" placeholder="Enter description" />
+                    <button id="save-inform-btn" class="primary-btn small">Save</button>
+                    <div id="add-inform-error" class="error-msg"></div>
+                </div>
+
+                <div class="clients-list-wrapper">
+                    <ul id="inform-list" class="clients-list"></ul>
+                    <div id="inform-empty" class="empty-msg hidden">No items found.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inform Status EDIT modal -->
+    <div id="inform-edit-modal" class="modal hidden">
+        <div class="modal-box">
+
+            <div class="modal-header">
+                <h3>Επεξεργασία inform status</h3>
+                <button id="inform-edit-close-btn" class="icon-btn" aria-label="Close">&times;</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="edit-field">
+                    <label for="inform-edit-name">Περιγραφή</label>
+                    <input id="inform-edit-name" type="text" />
+                </div>
+
+                <div id="inform-edit-error" class="error-msg"></div>
+
+                <div class="edit-actions">
+                    <button id="inform-edit-delete-btn" class="danger-btn">Διαγραφή</button>
+                    <button id="inform-edit-save-btn" class="primary-btn">Αποθήκευση</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
     <script src="/js/logout.js"></script>
     <script src="/js/clients.js"></script>
+    <script src="/js/inform.js"></script>
+
 </body>
 
 </html>
