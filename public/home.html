@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tonosis CRM – Home</title>
+    <link rel="stylesheet" href="/css/home.css" />
+</head>
+
+<body>
+
+    <div class="container">
+
+        <header class="header">
+            <h1>Tonosis CRM</h1>
+            <button id="logout-btn" class="logout">Logout</button>
+        </header>
+
+        <p class="welcome">Welcome, admin.</p>
+
+        <div class="cards">
+            <div class="card">Rooms</div>
+            <div class="card">Calendar</div>
+            <div class="card">Bookings</div>
+            <div class="card">Members</div>
+        </div>
+
+    </div>
+
+    <script>
+        // check if logged in
+        if (!localStorage.getItem('tonosis_logged_in')) {
+            window.location.href = '/';
+        }
+
+        document.getElementById('logout-btn').addEventListener('click', () => {
+            localStorage.removeItem('tonosis_logged_in');
+            window.location.href = '/';
+        });
+    </script>
+
+</body>
+
+</html>
