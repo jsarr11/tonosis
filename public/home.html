@@ -11,7 +11,6 @@
 <body>
 
     <div class="container">
-
         <header class="header">
             <h1>Tonosis CRM</h1>
             <button id="logout-btn" class="logout">Logout</button>
@@ -25,21 +24,9 @@
             <div class="card">Bookings</div>
             <div class="card">Members</div>
         </div>
-
     </div>
 
-    <script>
-        // check if logged in
-        if (!localStorage.getItem('tonosis_logged_in')) {
-            window.location.href = '/';
-        }
-
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            localStorage.removeItem('tonosis_logged_in');
-            window.location.href = '/';
-        });
-    </script>
-
+    <script src="/js/logout.js"></script>
 </body>
 
 </html>
