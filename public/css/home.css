@@ -340,3 +340,134 @@ body {
     font-size: 0.85rem;
     color: #9ca3af;
 }
+
+.modal-header h3 {
+    font-size: 1.3rem;
+}
+
+.clients-search-wrapper label,
+.add-client-panel label,
+.edit-field label,
+.switch-row span {
+    font-size: 0.95rem;
+}
+
+.clients-search-wrapper input,
+.add-client-panel input,
+#edit-client-name {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+}
+
+.clients-list li {
+    font-size: 1rem;
+    padding: 8px 4px;
+}
+
+.client-name {
+    cursor: pointer;
+}
+
+.primary-btn {
+    font-size: 1rem;
+    padding: 10px 16px;
+}
+
+.primary-btn.small {
+    font-size: 0.95rem;
+    padding: 8px 12px;
+}
+
+/* switch */
+.switch-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 12px;
+    margin-bottom: 8px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 46px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #4b5563;
+    transition: .2s;
+    border-radius: 999px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    top: 3px;
+    background-color: white;
+    transition: .2s;
+    border-radius: 50%;
+}
+
+.switch input:checked+.slider {
+    background-color: #22c55e;
+}
+
+.switch input:checked+.slider:before {
+    transform: translateX(22px);
+}
+
+/* edit modal layout */
+.edit-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 10px;
+}
+
+#edit-client-name {
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.6);
+    background: rgba(15, 23, 42, 0.8);
+    color: #e5e7eb;
+    outline: none;
+}
+
+#edit-client-name:focus {
+    border-color: #22c55e;
+}
+
+.edit-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.danger-btn {
+    background: #ef4444;
+    border: none;
+    color: #f9fafb;
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.danger-btn:hover {
+    background: #dc2626;
+}

@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const backdrop = document.getElementById('clients-backdrop');
     const modal = document.getElementById('clients-modal');
 
+    // edit modal
+    const editModal = document.getElementById('client-edit-modal');
+    const editCloseBtn = document.getElementById('edit-close-btn');
+    const editNameInput = document.getElementById('edit-client-name');
+    const editActiveCheckbox = document.getElementById('edit-client-active');
+    const editErrorEl = document.getElementById('edit-client-error');
+    const editSaveBtn = document.getElementById('edit-save-btn');
+    const editDeleteBtn = document.getElementById('edit-delete-btn');
+
     const searchInput = document.getElementById('clients-search');
     const listEl = document.getElementById('clients-list');
     const emptyEl = document.getElementById('clients-empty');
@@ -18,10 +27,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let allClients = [];
     let isLoadedOnce = false;
+    let currentClient = null; // για το edit modal
 
+    // ---------- MAIN MODAL ----------
     function openModal() {
         backdrop.classList.remove('hidden');
         modal.classList.remove('hidden');
+        editModal.classList.add('hidden');
+
         if (!isLoadedOnce) {
             loadClients();
             isLoadedOnce = true;
@@ -30,11 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function closeModal() {
+    function closeAllModals() {
         backdrop.classList.add('hidden');
         modal.classList.add('hidden');
+        editModal.classList.add('hidden');
+        currentClient = null;
     }
 
+    // ---------- LOAD CLIENTS ----------
     async function loadClients() {
         try {
             const res = await fetch('/api/clients');
@@ -54,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ---------- RENDER LIST ----------
     function renderClients(filterText) {
         const query = (filterText || '').toLowerCase();
         listEl.innerHTML = '';
@@ -82,14 +99,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const nameSpan = document.createElement('span');
             nameSpan.textContent = client.name || '(no name)';
+            nameSpan.classList.add('client-name');
 
             li.appendChild(dot);
             li.appendChild(nameSpan);
+
+            li.addEventListener('click', () => {
+                openEditModal(client);
+            });
 
             listEl.appendChild(li);
         });
     }
 
+    // ---------- ADD NEW CLIENT ----------
     async function saveNewClient() {
         const name = newNameInput.value.trim();
         addErrorEl.textContent = '';
@@ -116,14 +139,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // add to local list
             allClients.push(data.data);
 
-            // clear
             newNameInput.value = '';
             addErrorEl.textContent = '';
 
-            // re-render
             renderClients(searchInput.value.trim());
         } catch (err) {
             console.error('Network error saving client:', err);
@@ -131,16 +151,106 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Event listeners
-    if (openBtn) {
-        openBtn.addEventListener('click', openModal);
+    // ---------- EDIT MODAL ----------
+    function openEditModal(client) {
+        currentClient = client;
+        editErrorEl.textContent = '';
+
+        editNameInput.value = client.name || '';
+        editActiveCheckbox.checked =
+            client.is_active === 1 || client.is_active === '1';
+
+        // δείχνουμε μόνο το edit modal, οχι το list modal
+        modal.classList.add('hidden');
+        editModal.classList.remove('hidden');
+        backdrop.classList.remove('hidden');
+
+        editNameInput.focus();
     }
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeModal);
+
+    async function saveEditedClient() {
+        if (!currentClient) return;
+
+        const newName = editNameInput.value.trim();
+        const active = editActiveCheckbox.checked ? 1 : 0;
+
+        if (!newName) {
+            editErrorEl.textContent = 'Name is required.';
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/clients/${currentClient.client_id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name: newName,
+                    is_active: active,
+                }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                editErrorEl.textContent = data.message || 'Error updating client.';
+                return;
+            }
+
+            // ενημέρωση τοπικού πίνακα
+            const idx = allClients.findIndex(c => c.client_id === currentClient.client_id);
+            if (idx !== -1) {
+                allClients[idx] = data.data;
+            }
+
+            // πίσω στο main modal
+            editErrorEl.textContent = '';
+            editModal.classList.add('hidden');
+            modal.classList.remove('hidden');
+            renderClients(searchInput.value.trim());
+        } catch (err) {
+            console.error('Network error updating client:', err);
+            editErrorEl.textContent = 'Network error.';
+        }
     }
-    if (backdrop) {
-        backdrop.addEventListener('click', closeModal);
+
+    async function deleteCurrentClient() {
+        if (!currentClient) return;
+
+        const sure = window.confirm('Να διαγραφεί ο πελάτης;');
+        if (!sure) return;
+
+        try {
+            const res = await fetch(`/api/clients/${currentClient.client_id}`, {
+                method: 'DELETE',
+            });
+
+            const data = await res.json();
+
+            if (!res.ok || !data.success) {
+                editErrorEl.textContent = data.message || 'Error deleting client.';
+                return;
+            }
+
+            // βγάλε τον από allClients
+            allClients = allClients.filter(c => c.client_id !== currentClient.client_id);
+
+            currentClient = null;
+            editErrorEl.textContent = '';
+
+            // κλείνουμε edit, γυρίζουμε στο list
+            editModal.classList.add('hidden');
+            modal.classList.remove('hidden');
+            renderClients(searchInput.value.trim());
+        } catch (err) {
+            console.error('Network error deleting client:', err);
+            editErrorEl.textContent = 'Network error.';
+        }
     }
+
+    // ---------- EVENTS ----------
+    if (openBtn) openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeAllModals);
+    if (backdrop) backdrop.addEventListener('click', closeAllModals);
 
     if (searchInput) {
         searchInput.addEventListener('input', () => {
@@ -160,15 +270,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (saveBtn) {
-        saveBtn.addEventListener('click', saveNewClient);
-    }
+    if (saveBtn) saveBtn.addEventListener('click', saveNewClient);
 
     if (newNameInput) {
         newNameInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 saveNewClient();
+            }
+        });
+    }
+
+    // edit modal buttons
+    if (editCloseBtn) editCloseBtn.addEventListener('click', closeAllModals);
+    if (editSaveBtn) editSaveBtn.addEventListener('click', saveEditedClient);
+    if (editDeleteBtn) editDeleteBtn.addEventListener('click', deleteCurrentClient);
+
+    if (editNameInput) {
+        editNameInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                saveEditedClient();
             }
         });
     }
