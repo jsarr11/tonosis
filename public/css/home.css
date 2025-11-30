@@ -7,7 +7,7 @@ body {
 }
 
 .container {
-    max-width: 1100px;
+    /* max-width: 1100px; */
     margin: 0 auto;
     padding: 30px 20px;
 }
@@ -67,4 +67,23 @@ body {
 .card:hover {
     background: rgba(30, 41, 59, 0.95);
     transform: translateY(-4px);
+}
+
+.layout {
+    display: flex;
+    margin-top: 20px;
+}
+
+.left-panel {
+    flex: 1;
+    margin-left: 20px;
+}
+
+.right-panel {
+    width: 200px;
+    min-width: 200px;
+    background: rgba(30, 41, 59, 0.5);
+    padding: 20px;
+    border-radius: 12px;
+    height: calc(100vh - 140px);
 }
