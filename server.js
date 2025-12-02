@@ -1,30 +1,32 @@
-import express from 'express';
-import dotenv from 'dotenv';
-import cors from 'cors';
-import db from './db.js';
-
-dotenv.config();
-
+require('dotenv').config();
+const express = require('express');
+const path = require('path');
+const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET || 'dev-secret-tonosis',
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            httpOnly: true,
+            maxAge: 1000 * 60 * 60 * 24,
+        },
+    })
+);
 
-app.get('/ping-db', async (req, res) => {
-    try {
-        const result = await db.query('SELECT NOW()');
-        res.json({ time: result.rows[0].now });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Database connection failed' });
-    }
-});
+const routes = require('./routes/index');
+app.use(routes);
 
-app.get('/', (req, res) => {
-    res.send('Server is running 🚀');
+app.use(express.static(path.join(__dirname, 'frontend/dist')));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
 });
 
 app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
+    console.log(`Tonosis CRM server running on http://localhost:${PORT}`);
 });
