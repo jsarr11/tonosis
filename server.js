@@ -1,39 +1,30 @@
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const session = require('express-session');
+import express from 'express';
+import dotenv from 'dotenv';
+import cors from 'cors';
+import db from './db.js';
+
+dotenv.config();
 
 const app = express();
-
 const PORT = process.env.PORT || 3000;
 
-// ------------ MIDDLEWARE ------------
+app.use(cors());
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// sessions – 24 hours
-app.use(
-    session({
-        secret: process.env.SESSION_SECRET || 'dev-secret-tonosis',
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 24, // 24 hours
-        },
-    })
-);
+app.get('/ping-db', async (req, res) => {
+    try {
+        const result = await db.query('SELECT NOW()');
+        res.json({ time: result.rows[0].now });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Database connection failed' });
+    }
+});
 
-// ------------ ROUTES ------------
-const routes = require('./routes/index');
-app.use(routes);
+app.get('/', (req, res) => {
+    res.send('Server is running 🚀');
+});
 
-// ------------ STATIC FILES ------------
-// Serve everything in /public AFTER routes,
-// so routes can protect login pages before static serving!
-app.use(express.static(path.join(__dirname, 'public')));
-
-// ------------ START SERVER ------------
 app.listen(PORT, () => {
-    console.log(`Tonosis CRM server running on http://localhost:${PORT}`);
+    console.log(`Server listening on port ${PORT}`);
 });
