@@ -14,16 +14,15 @@ app.use(
         saveUninitialized: false,
         cookie: {
             httpOnly: true,
-            maxAge: 1000 * 60 * 60 * 24,
+            maxAge: 1000 * 60 * 60 * 24, // 1 day
         },
     })
 );
 
 const routes = require('./routes/index');
 app.use(routes);
-
 app.use(express.static(path.join(__dirname, 'frontend/dist')));
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
     res.sendFile(path.join(__dirname, 'frontend/dist/index.html'));
 });
 

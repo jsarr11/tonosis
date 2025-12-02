@@ -22,13 +22,34 @@ router.get('/api/tonosis', (req, res) => {
     });
 });
 
-router.post('/api/login', (req, res) => {
+// router.post('/api/login', (req, res) => {
+//     const { username, password } = req.body;
+//     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+//         req.session.isAuthenticated = true;
+//         return res.json({ success: true, message: 'Login successful' });
+//     }
+//     res.status(401).json({ success: false, message: 'Invalid username or password' });
+// });
+
+router.post("/api/login", (req, res) => {
     const { username, password } = req.body;
-    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-        req.session.isAuthenticated = true;
-        return res.json({ success: true, message: 'Login successful' });
+    if (
+        username === process.env.ADMIN_USR &&
+        password === process.env.ADMIN_PSW
+    ) {
+        req.session.user = { username };
+        res.json({ success: true });
+    } else {
+        res.status(401).json({ success: false, message: "Invalid credentials" });
     }
-    res.status(401).json({ success: false, message: 'Invalid username or password' });
+});
+
+router.get("/api/me", (req, res) => {
+    if (req.session && req.session.user) {
+        res.json({ loggedIn: true, user: req.session.user });
+    } else {
+        res.status(401).json({ loggedIn: false });
+    }
 });
 
 router.post('/api/logout', (req, res) => {
