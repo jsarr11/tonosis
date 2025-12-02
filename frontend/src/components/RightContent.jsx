@@ -1,6 +1,8 @@
 import ClientsPopup from "./ClientsPopup";
 import InformStatusPopup from "./InformStatusPopup";
 import RightButton from "./RightButton";
+import RoomsPopup from "./RoomsPopup";
+import TrainersPopup from "./TrainersPopup";
 
 export default function RightContent() {
     return (
@@ -15,6 +17,8 @@ export default function RightContent() {
             <h3>Actions</h3>
             <RightButton label="Clients" popupContent={<ClientsPopup />} />
             <RightButton label="Inform Status" popupContent={<InformStatusPopup />} />
+            <RightButton label="Rooms" popupContent={<RoomsPopup />} />
+            <RightButton label="Trainers" popupContent={<TrainersPopup />} />
         </div>
     );
 }
